@@ -1,16 +1,6 @@
 #!/usr/bin/bash
 set -e
 
-# Following Variables needed:
-#
-# JDBC_NAME - The Username of the Database
-# JDBC_PASSWORD - The Password of the User
-# JDBC_DRIVER - The diver to use for JDBC
-# JDBC_URL - The URL to use for JDBC
-# APP_CONTEXT - The context of the webapp
-# SOLR_URL - The url to the solr server
-# SOLR_CORE - The name of the main solr core
-
 echo "UBO Starter Script"
 sleep 5 # wait for database (TODO: replace with wait-for-it)
 MCR_HOME=/root/.mycore/${APP_CONTEXT}/
