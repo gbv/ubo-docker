@@ -11,14 +11,16 @@ function downloadDriver {
   then
     curl -o "${MCR_HOME}lib/$FILENAME" "$1"
   fi
-  if [[ ! -f "/opt/ubo/target/${FILENAME}" ]]
-  then
-    cp "${MCR_HOME}lib/$FILENAME" "/opt/ubo/target/${FILENAME}"
-  fi
+  # no copy needed anymore
+  # if [[ ! -f "/opt/ubo/target/${FILENAME}" ]]
+  # then
+  #  cp "${MCR_HOME}lib/$FILENAME" "/opt/ubo/target/${FILENAME}"
+  # fi
 }
 
 function setUpMyCoRe {
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh create configuration directory
+    sed -ri "s/(-DMCR.AppName=).+( \\\\)/\1${APP_CONTEXT}\2/" /opt/ubo/target/bin/ubo.sh
+    /opt/ubo/target/bin/ubo.sh create configuration directory
 
     sed -ri "s/(name=\"javax.persistence.jdbc.user\" value=\").*(\")/\1${JDBC_NAME}\2/" "${MCR_HOME}resources/META-INF/persistence.xml"
     sed -ri "s/(name=\"javax.persistence.jdbc.password\" value=\").*(\")/\1${JDBC_PASSWORD}\2/" "${MCR_HOME}resources/META-INF/persistence.xml"
@@ -26,9 +28,8 @@ function setUpMyCoRe {
     sed -ri "s/(name=\"javax.persistence.jdbc.url\" value=\").*(\")/\1${JDBC_URL}\2/" "${MCR_HOME}resources/META-INF/persistence.xml"
     #sed -ri "s/(name=\"hibernate.hbm2ddl.auto\" value=\").*(\")/\1update\2/" "${MCR_HOME}resources/META-INF/persistence.xml"
     sed -ri "s/<mapping-file>META-INF\/mycore-viewer-mappings.xml<\/mapping-file>//" "${MCR_HOME}resources/META-INF/persistence.xml"
+    sed -ri "s/(<\/properties>)/<property name=\"hibernate\.connection\.provider_class\" value=\"org\.hibernate\.connection\.C3P0ConnectionProvider\" \/>\n<property name=\"hibernate\.c3p0\.min_size\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_size\" value=\"50\" \/>\n<property name=\"hibernate\.c3p0\.acquire_increment\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_statements\" value=\"30\" \/>\n<property name=\"hibernate\.c3p0\.timeout\" value=\"1800\" \/>\n\1/" "${MCR_HOME}resources/META-INF/persistence.xml"
     sed -ri "s/#?(MCR\.Solr\.ServerURL=).+/\1${SOLR_URL}/" "${MCR_HOME}mycore.properties"
-    sed -ri "s/#?(MCR\.Solr\.ServerURL=).+/\1${SOLR_URL}/" "${MCR_HOME}mycore.properties"
-    sed -ri "s/#?(MCR\.Solr\.Core\.main\.Name=).+/\1${SOLR_CORE}/" "${MCR_HOME}mycore.properties"
     sed -ri "s/#?(MCR\.Solr\.Core\.main\.Name=).+/\1${SOLR_CORE}/" "${MCR_HOME}mycore.properties"
     mkdir -p "${MCR_HOME}lib"
 
@@ -40,13 +41,17 @@ function setUpMyCoRe {
       com.mysql.jdbc.Driver) downloadDriver "https://repo.maven.apache.org/maven2/mysql/mysql-connector-java/8.0.19/mysql-connector-java-8.0.19.jar";;
     esac
 
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh init superuser
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh update all classifications from directory /opt/ubo/src/main/setup/classifications
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh update permission create-mods for id POOLPRIVILEGE with rulefile src/main/resources/acl-rule-always-allowed.xml described by always allowed
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh update permission read for id default with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
-    JAVA_OPTS="-DMCR.AppName=${APP_CONTEXT}" /opt/ubo/target/bin/ubo.sh reload solr configuration main in core main
+    downloadDriver https://repo1.maven.org/maven2/org/hibernate/hibernate-c3p0/5.3.9.Final/hibernate-c3p0-5.3.9.Final.jar
+    downloadDriver https://repo1.maven.org/maven2/com/mchange/c3p0/0.9.5.2/c3p0-0.9.5.2.jar
+    downloadDriver https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar
+
+    /opt/ubo/target/bin/ubo.sh init superuser
+    /opt/ubo/target/bin/ubo.sh update all classifications from directory /opt/ubo/src/main/setup/classifications
+    /opt/ubo/target/bin/ubo.sh update permission create-mods for id POOLPRIVILEGE with rulefile src/main/resources/acl-rule-always-allowed.xml described by always allowed
+    /opt/ubo/target/bin/ubo.sh update permission read for id default with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
+    /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
+    /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
+    /opt/ubo/target/bin/ubo.sh reload solr configuration main in core main
 }
 
 [ "$(ls -A "$MCR_HOME")" ] && echo "MyCoRe-Home is not empty" || setUpMyCoRe

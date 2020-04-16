@@ -1,6 +1,6 @@
 # Bind paths /root/.mycore/ubo/
 FROM alpine/git as git
-ARG UBO_BRANCH=issues/UBO-38-Integrate_SOLR_7_configuration
+ARG UBO_BRANCH=master
 RUN mkdir /opt/ubo
 WORKDIR /opt/
 RUN git --version && \
