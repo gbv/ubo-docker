@@ -47,7 +47,7 @@ function setUpMyCoRe {
 
     /opt/ubo/target/bin/ubo.sh init superuser
     /opt/ubo/target/bin/ubo.sh update all classifications from directory /opt/ubo/src/main/setup/classifications
-    /opt/ubo/target/bin/ubo.sh update permission create-mods for id POOLPRIVILEGE with rulefile src/main/resources/acl-rule-always-allowed.xml described by always allowed
+    /opt/ubo/target/bin/ubo.sh update permission create-mods for id POOLPRIVILEGE with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
     /opt/ubo/target/bin/ubo.sh update permission read for id default with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
     /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
     /opt/ubo/target/bin/ubo.sh update permission read for id restapi:/ with rulefile /opt/ubo/src/main/resources/acl-rule-always-allowed.xml described by always allowed
