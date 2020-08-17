@@ -3,6 +3,7 @@ FROM alpine/git as git
 ARG UBO_BRANCH=master
 RUN mkdir /opt/ubo
 WORKDIR /opt/
+ADD https://api.github.com/repos/MyCoRe-Org/ubo/git/refs/heads/$UBO_BRANCH ubo-version.json
 RUN git --version && \
     git clone https://github.com/MyCoRe-Org/ubo.git
 WORKDIR /opt/ubo
