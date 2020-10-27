@@ -8,7 +8,7 @@ RUN git --version && \
     git clone https://github.com/MyCoRe-Org/ubo.git
 WORKDIR /opt/ubo
 RUN git checkout ${UBO_BRANCH}
-
+FROM regreb/bibutils as bibutils
 FROM maven:3-jdk-11 as maven
 RUN groupadd maven && \
     useradd -m -g maven maven
@@ -27,6 +27,7 @@ WORKDIR /usr/local/tomcat/
 ARG PACKET_SIZE="65536"
 ENV JAVA_OPTS="-Xmx1g -Xms1g"
 ENV APP_CONTEXT="ubo"
+COPY --from=bibutils --chown=root:root /usr/local/bin/* /usr/local/bin/
 COPY docker-entrypoint.sh /usr/local/bin/ubo.sh
 RUN ["chmod", "+x", "/usr/local/bin/ubo.sh"]
 RUN rm -rf /usr/local/tomcat/webapps/*
