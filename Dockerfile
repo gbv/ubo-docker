@@ -1,6 +1,6 @@
 # Bind paths /root/.mycore/ubo/
 FROM alpine/git as git
-ARG UBO_BRANCH=master
+ARG UBO_BRANCH=split_into_modules
 RUN mkdir /opt/ubo
 WORKDIR /opt/
 RUN git --version && \
@@ -36,6 +36,10 @@ WORKDIR /usr/local/tomcat/
 ARG PACKET_SIZE="65536"
 ENV JAVA_OPTS="-Xmx1g -Xms1g"
 ENV APP_CONTEXT="ubo"
+ENV MCR_CONFIG_DIR="/mcr/home/"
+ENV MCR_DATA_DIR="/mcr/data/"
+ENV XMX="1g"
+ENV XMS="1g"
 COPY --from=bibutils --chown=root:root /usr/local/bin/* /usr/local/bin/
 COPY docker-entrypoint.sh /usr/local/bin/ubo.sh
 RUN ["chmod", "+x", "/usr/local/bin/ubo.sh"]

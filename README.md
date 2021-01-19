@@ -9,12 +9,14 @@ This is a dockerfile for the project https://github.com/mycore-org/ubo
 - APP_CONTEXT - The context of the webapp
 - SOLR_URL - The url to the solr server
 - SOLR_CORE - The name of the main solr core
+- SOLR_CLASSIFICATION_CORE - The name of the main solr core
 
 ## Mount points
-/root/.mycore/ubo/ - context - see also $APP_CONTEXT
+/mcr/home/ - the configuration dir
+/mcr/data/ - the data dir (will be separated in mycore.properties by docker)
 
 ## build and deploy
 ```
-sudo docker build --pull --no-cache . -t vzgreposis/ubo:latest
-sudo docker push  vzgreposis/mir:latest
+sudo docker build --pull --no-cache . -t vzgreposis/ubo:master
+sudo docker push  vzgreposis/ubo:master
 ```
