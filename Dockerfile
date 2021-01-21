@@ -1,6 +1,6 @@
 # Bind paths /root/.mycore/ubo/
 FROM alpine/git as git
-ARG UBO_BRANCH=split_into_modules
+ARG UBO_BRANCH=master
 RUN mkdir /opt/ubo
 WORKDIR /opt/
 RUN git --version && \
