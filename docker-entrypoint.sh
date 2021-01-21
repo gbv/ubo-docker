@@ -76,7 +76,7 @@ function setDockerValues() {
     if  grep -q "MCR.Save.FileSystem=" "${MYCORE_PROPERTIES}" ; then
           sed -ri "s/#?(MCR\.Save\.FileSystem=).+/\1${MCR_SAVE_DIR_ESCAPED}/" "${MYCORE_PROPERTIES}"
     else
-          echo "MCR.datadir=${MCR_DATA_DIR}">>"${MYCORE_PROPERTIES}"
+          echo "MCR.Save.FileSystem=${MCR_SAVE_DIR}">>"${MYCORE_PROPERTIES}"
     fi
 
     case $JDBC_DRIVER in
