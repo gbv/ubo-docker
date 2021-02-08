@@ -1,12 +1,6 @@
-# Bind paths /root/.mycore/ubo/
 FROM alpine/git as git
 ARG UBO_BRANCH=master
 RUN mkdir /opt/ubo
-WORKDIR /opt/
-RUN git --version && \
-    git clone https://github.com/MyCoRe-Org/mycore.git
-WORKDIR /opt/mycore
-RUN git checkout issues/MCR-2140-in_some_cases_xpath_build_in_MCRXPathBuilder_is_not_unique
 WORKDIR /opt/
 ADD https://api.github.com/repos/MyCoRe-Org/ubo/git/refs/heads/$UBO_BRANCH ubo-version.json
 RUN git --version && \
@@ -18,10 +12,6 @@ FROM maven:3-jdk-11 as maven
 RUN groupadd maven && \
     useradd -m -g maven maven
 USER maven
-COPY --from=git --chown=maven:maven /opt/mycore/ /opt/mycore
-WORKDIR /opt/mycore
-RUN mvn --version && \
-    mvn clean install -DskipTests
 COPY --from=git --chown=maven:maven /opt/ubo/ /opt/ubo
 WORKDIR /opt/ubo
 RUN mvn --version && \
