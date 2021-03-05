@@ -96,6 +96,7 @@ function setDockerValues() {
 
 function setUpMyCoRe {
     /opt/ubo/ubo-cli/target/bin/ubo.sh create configuration directory
+    openssl rand 4096 -out "${MCR_CONFIG_DIR}jwt.secret"
     setDockerValues
     sed -ri "s/<mapping-file>META-INF\/mycore-viewer-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
     sed -ri "s/(<\/properties>)/<property name=\"hibernate\.connection\.provider_class\" value=\"org\.hibernate\.connection\.C3P0ConnectionProvider\" \/>\n<property name=\"hibernate\.c3p0\.min_size\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_size\" value=\"50\" \/>\n<property name=\"hibernate\.c3p0\.acquire_increment\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_statements\" value=\"30\" \/>\n<property name=\"hibernate\.c3p0\.timeout\" value=\"1800\" \/>\n\1/" "${PERSISTENCE_XML}"
