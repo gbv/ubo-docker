@@ -92,13 +92,21 @@ function setDockerValues() {
     downloadDriver https://repo1.maven.org/maven2/org/hibernate/hibernate-c3p0/5.3.9.Final/hibernate-c3p0-5.3.9.Final.jar
     downloadDriver https://repo1.maven.org/maven2/com/mchange/c3p0/0.9.5.2/c3p0-0.9.5.2.jar
     downloadDriver https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar
+
+    sed -ri "s/<mapping-file>META-INF\/mycore-viewer-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
+    sed -ri "s/<mapping-file>META-INF\/mycore-iview2-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
+
+    if [ -f "${MCR_CONFIG_DIR}jwt.secret" ]; then
+      echo "jwt.secret already exists."
+    else
+      echo "jwt.secret does not exists, create it.."
+      openssl rand -out "${MCR_CONFIG_DIR}jwt.secret" 4096
+    fi;
 }
 
 function setUpMyCoRe {
     /opt/ubo/ubo-cli/target/bin/ubo.sh create configuration directory
-    openssl rand 4096 -out "${MCR_CONFIG_DIR}jwt.secret"
     setDockerValues
-    sed -ri "s/<mapping-file>META-INF\/mycore-viewer-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
     sed -ri "s/(<\/properties>)/<property name=\"hibernate\.connection\.provider_class\" value=\"org\.hibernate\.connection\.C3P0ConnectionProvider\" \/>\n<property name=\"hibernate\.c3p0\.min_size\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_size\" value=\"50\" \/>\n<property name=\"hibernate\.c3p0\.acquire_increment\" value=\"2\" \/>\n<property name=\"hibernate\.c3p0\.max_statements\" value=\"30\" \/>\n<property name=\"hibernate\.c3p0\.timeout\" value=\"1800\" \/>\n\1/" "${PERSISTENCE_XML}"
     /opt/ubo/ubo-cli/target/bin/ubo.sh init superuser
     /opt/ubo/ubo-cli/target/bin/ubo.sh update all classifications from directory /opt/ubo/ubo-cli/src/main/setup/classifications
@@ -115,7 +123,13 @@ function setUpMyCoRe {
 sed -ri "s/(-DMCR.AppName=).+( \\\\)/\-DMCR.ConfigDir=${MCR_CONFIG_DIR_ESCAPED}\2/" /opt/ubo/ubo-cli/target/bin/ubo.sh
 sed -ri "s/(-DMCR.ConfigDir=).+( \\\\)/\-DMCR.ConfigDir=${MCR_CONFIG_DIR_ESCAPED}\2/" /opt/ubo/ubo-cli/target/bin/ubo.sh
 
-[ "$(ls -A "$MCR_CONFIG_DIR")" ] && setDockerValues || setUpMyCoRe
+if [ -f "$MYCORE_PROPERTIES" ]; then
+  echo "Exists set docker values!"
+  setDockerValues
+else
+  echo "Set up mycore home!"
+  setUpMyCoRe
+fi
 
 rm -rf /usr/local/tomcat/webapps/*
 cp /opt/ubo/ubo-webapp/target/ubo-*.war "/usr/local/tomcat/webapps/${APP_CONTEXT}.war"
