@@ -133,5 +133,5 @@ fi
 
 rm -rf /usr/local/tomcat/webapps/*
 cp /opt/ubo/ubo-webapp/target/ubo-*.war "/usr/local/tomcat/webapps/${APP_CONTEXT}.war"
-export JAVA_OPTS="-DMCR.ConfigDir=${MCR_CONFIG_DIR} -Xmx${XMX} -Xms${XMS}"
+export JAVA_OPTS="-DMCR.ConfigDir=${MCR_CONFIG_DIR} -Xmx${XMX} -Xms${XMS} -XX:+CrashOnOutOfMemoryError"
 catalina.sh run
