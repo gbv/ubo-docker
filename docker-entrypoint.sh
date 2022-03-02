@@ -95,6 +95,8 @@ function setDockerValues() {
 
     sed -ri "s/<mapping-file>META-INF\/mycore-viewer-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
     sed -ri "s/<mapping-file>META-INF\/mycore-iview2-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
+    sed -ri "s/<mapping-file>META-INF\/mycore-ifs-mappings.xml<\/mapping-file>//" "${PERSISTENCE_XML}"
+
 
     if [ -f "${MCR_CONFIG_DIR}jwt.secret" ]; then
       echo "jwt.secret already exists."
