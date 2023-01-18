@@ -1,5 +1,5 @@
 FROM alpine/git as git
-ARG UBO_BRANCH=main
+ARG UBO_BRANCH=issues/UBO-208-display-local-users-with-ldap-search
 RUN mkdir /opt/ubo
 WORKDIR /opt/
 ADD https://api.github.com/repos/MyCoRe-Org/ubo/git/refs/heads/$UBO_BRANCH ubo-version.json
